@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RF Transmitter & Receiver Project</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        pre {
+            background-color: #eee;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        code {
+            font-family: Consolas, monospace;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>RF Transmitter & Receiver Project</h1>
+
+    <div class="section">
+        <h2>Project Description</h2>
+        <p>
+            This Arduino project demonstrates sending and receiving messages using RF modules with the 
+            <strong>RadioHead</strong> library. 
+            The transmitter sends a "Hello World!" message every second, and the receiver prints it 
+            on the Serial Monitor.
+        </p>
+    </div>
+
+    <div class="section">
+        <h2>Requirements</h2>
+        <ul>
+            <li>Arduino Board (Uno, Nano, etc.)</li>
+            <li>433MHz RF Transmitter & Receiver modules</li>
+            <li>Arduino IDE with <strong>RadioHead</strong> library installed</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>Transmitter Code</h2>
+        <pre><code>
+#include &lt;RH_ASK.h&gt;
+#include &lt;SPI.h&gt; // Not actually used but needed
+
+RH_ASK driver;
+
+void setup() {
+    Serial.begin(9600);
+    if (!driver.init()) {
+        Serial.println("init failed");
+    }
+}
+
+void loop() {
+    const char *msg = "Hello World!";
+    driver.send((uint8_t *)msg, strlen(msg));
+    driver.waitPacketSent();
+    Serial.println("Message sent: Hello World!");
+    delay(1000);
+}
+        </code></pre>
+    </div>
+
+    <div class="section">
+        <h2>Receiver Code</h2>
+        <pre><code>
+#include &lt;RH_ASK.h&gt;
+#include &lt;SPI.h&gt;
+
+RH_ASK driver;
+
+void setup() {
+    Serial.begin(9600);
+    if (!driver.init()) {
+        Serial.println("init failed");
+    }
+}
+
+void loop() {
+    uint8_t buf[12];
+    uint8_t buflen = sizeof(buf);
+    if (driver.recv(buf, &buflen)) {
+        Serial.print("Message received: ");
+        Serial.println((char*)buf);
+    }
+}
+        </code></pre>
+    </div>
+
+</body>
+</html>
